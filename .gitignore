@@ -1,0 +1,9 @@
+/dist/netic_config-0.1.0.tar.gz
+/dist/netic_config-0.1.0-py3-none-any.whl
+/poetry.lock
+/build
+/dist
+/*.egg-info
+.*.swp
+__pycache__
+.idea
