@@ -1,10 +1,12 @@
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
+import json
 from typing import Any, Dict
 from unittest.mock import patch
 
 from flask.testing import FlaskClient
 from urllib3.util import parse_url
+from werkzeug.test import TestResponse
 
 
 class ConvertHttpx2FlaskTestClient(FlaskClient):
@@ -36,8 +38,15 @@ class ConvertHttpx2FlaskTestClient(FlaskClient):
         kwargs.pop("content")
         kwargs.pop("files")
         kwargs.pop("params")
-        resp = self.open(*args, **kwargs)
-        resp.content = resp.content_type
+        try:
+            resp = self.open(*args, **kwargs)
+        except Exception as err:
+            resp = TestResponse(
+                response=json.dumps({"error_type": str(err.__class__), "args": err.args}).encode(),
+                status="500",
+                headers={"Content-Type": "application/json"},
+                request=None)
+        resp.content = resp.data
 
         # Make `resp.json` return the method resp.get_json, instead of the result resp.get_json()
         resp._get_json = resp.get_json
