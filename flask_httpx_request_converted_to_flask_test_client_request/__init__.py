@@ -1,4 +1,4 @@
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 import json
 from typing import Any, Dict
@@ -68,3 +68,11 @@ class ConvertHttpx2FlaskTestClient(FlaskClient):
         self.mock_httpx_request.stop()
         return super().__exit__(exc_type, exc_val, exc_tb)
 
+
+class ConvertHttpx2FlaskTestClientWithoutEnterAndExit(ConvertHttpx2FlaskTestClient):
+    def __init__(self, *args, **kwargs):
+        super(ConvertHttpx2FlaskTestClientWithoutEnterAndExit, self).__init__(*args, **kwargs)
+        self.mock_httpx_request.start()
+
+    def __del__(self):
+        self.mock_httpx_request.stop()
