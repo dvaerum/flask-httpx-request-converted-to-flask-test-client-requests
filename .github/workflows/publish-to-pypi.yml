@@ -32,6 +32,12 @@ jobs:
         run: |
           if [ -d tests ]; then python -m unittest ./tests/**.py; fi
 
+      - name: Clean-up before build distribution 📦
+        run: |
+          rm -rf build
+          rm -rf dist
+          rm -rf flask_httpx_request_converted_to_flask_test_client_request.egg-info
+
       - name: Build distribution 📦
         run: |
           python setup.py sdist bdist_wheel
