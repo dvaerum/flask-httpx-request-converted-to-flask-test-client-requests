@@ -10,7 +10,8 @@ setuptools.setup(
     author="Dennis Vestergaard Værum",
     author_email="convert_httpx_2_flask_test_client@varum.dk",
     license="0BSD",
-    description="Unittest Tool: This is a `flask.test_client_class` I wrote to making the libraries created by "
+    description="Unittest Tool: This is a `flask.test_client_class` "
+                "I wrote to making the libraries created by "
                 "`openapi-python-client` work with `flask.test_client()`",
     long_description=long_description,
     long_description_content_type="text/markdown",

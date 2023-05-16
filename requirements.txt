@@ -1,0 +1,8 @@
+urllib3
+flask
+werkzeug
+
+# Unittests
+pydantic
+flask_openapi3
+openapi_python_client

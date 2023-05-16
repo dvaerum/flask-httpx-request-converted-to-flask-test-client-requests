@@ -1,11 +1,11 @@
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 import json
-from typing import Any, Dict
+from typing import Any, Dict, TYPE_CHECKING
 from unittest.mock import patch
 
-from flask.testing import FlaskClient
 from urllib3.util import parse_url
+from flask.testing import FlaskClient
 from werkzeug.test import TestResponse
 
 
@@ -16,12 +16,14 @@ class ConvertHttpx2FlaskTestClient(FlaskClient):
                  cookies: Dict[str, Any] = None,
                  timeout: float = 10.0,
                  verify_ssl: bool = True,
+                 follow_redirects: bool = False,
                  **kwargs: Any):
         self.base_url = base_url
         self._headers = headers if headers else {}
         self._cookies = cookies if cookies else {}
         self._timeout = timeout
         self.verify_ssl = verify_ssl
+        self.follow_redirects = follow_redirects
 
         self.mock_httpx_request = patch("httpx.Client.request",
                                         side_effect=self._convert_httpx_request_2_flask_client_open)
@@ -42,13 +44,15 @@ class ConvertHttpx2FlaskTestClient(FlaskClient):
             resp = self.open(*args, **kwargs)
         except Exception as err:
             resp = TestResponse(
-                response=json.dumps({"error_type": str(err.__class__), "args": err.args}).encode(),
+                response=json.dumps({"error_type": str(err.__class__),
+                                     "args": err.args}).encode(),
                 status="500",
                 headers={"Content-Type": "application/json"},
                 request=None)
         resp.content = resp.data
 
-        # Make `resp.json` return the method resp.get_json, instead of the result resp.get_json()
+        # Make `resp.json` return the method resp.get_json,
+        # instead of the result resp.get_json()
         resp._get_json = resp.get_json
         resp.get_json = lambda: resp._get_json
 
@@ -60,7 +64,7 @@ class ConvertHttpx2FlaskTestClient(FlaskClient):
     def get_timeout(self):
         return self._timeout
 
-    def __enter__(self) -> "FlaskClient":
+    def __enter__(self) -> FlaskClient:
         self.mock_httpx_request.start()
         return super().__enter__()
 
@@ -71,7 +75,8 @@ class ConvertHttpx2FlaskTestClient(FlaskClient):
 
 class ConvertHttpx2FlaskTestClientWithoutEnterAndExit(ConvertHttpx2FlaskTestClient):
     def __init__(self, *args, **kwargs):
-        super(ConvertHttpx2FlaskTestClientWithoutEnterAndExit, self).__init__(*args, **kwargs)
+        super(ConvertHttpx2FlaskTestClientWithoutEnterAndExit,
+              self).__init__(*args, **kwargs)
         self.mock_httpx_request.start()
 
     def __del__(self):

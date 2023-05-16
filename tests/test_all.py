@@ -34,7 +34,7 @@ class Testing(unittest.TestCase):
             resp = client.get("/openapi/openapi.json")
             openapi = GeneratorData.from_dict(data=resp.json, config=config)
 
-            path = Path(__file__).parent.joinpath("test_rest_api")
+            path = Path(__file__).parent.parent.joinpath("test_rest_api")
             path.mkdir(exist_ok=True)
             project = Project(openapi=openapi, meta=MetaType.NONE, config=config)
             project.package_dir = path

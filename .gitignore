@@ -7,3 +7,4 @@
 .*.swp
 __pycache__
 .idea
+test_rest_api
