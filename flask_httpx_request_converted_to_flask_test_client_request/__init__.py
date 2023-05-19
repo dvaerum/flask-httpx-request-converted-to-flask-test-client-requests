@@ -1,4 +1,4 @@
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 
 import json
 from typing import Any, Dict, TYPE_CHECKING
@@ -16,6 +16,7 @@ class ConvertHttpx2FlaskTestClient(FlaskClient):
                  cookies: Dict[str, Any] = None,
                  timeout: float = 10.0,
                  verify_ssl: bool = True,
+                 raise_on_unexpected_status: bool = False,
                  follow_redirects: bool = False,
                  **kwargs: Any):
         self.base_url = base_url
@@ -23,6 +24,7 @@ class ConvertHttpx2FlaskTestClient(FlaskClient):
         self._cookies = cookies if cookies else {}
         self._timeout = timeout
         self.verify_ssl = verify_ssl
+        self.raise_on_unexpected_status = raise_on_unexpected_status
         self.follow_redirects = follow_redirects
 
         self.mock_httpx_request = patch("httpx.Client.request",
